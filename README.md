@@ -11,3 +11,5 @@ Developing / Contributing
 ------
 
 To install for local development: `yarn install`
+
+To build the dist/ directory: `gulp`
