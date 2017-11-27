@@ -1,0 +1,20 @@
+{
+  "name": "rhtmlParts",
+  "version": "1.0.0",
+  "description": "Collection of reused widget parts",
+  "main": "src/index.js",
+  "private": true,
+  "engines": {
+    "node": ">=6.9.5"
+  },
+  "scripts": {
+    "prepush": "node ./bin/prepush"
+  },
+  "devDependencies": {
+    "husky": "^0.13.3",
+    "sinon": "^2.3.2"
+  },
+  "dependencies": {
+    "lodash": "4.6.1"
+  }
+}
