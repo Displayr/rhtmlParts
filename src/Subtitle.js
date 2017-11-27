@@ -1,10 +1,11 @@
-const _ = require('lodash')
+const isNumber = require('lodash.isnumber')
+const isString = require('lodash.isstring')
 
 class Subtitle {
   constructor (subtitleText, subtitleFontColor, subtitleFontSize, subtitleFontFamily, titleText) {
     this.font = {
       color: subtitleFontColor,
-      size: _.isNumber(subtitleFontSize) ? subtitleFontSize : 0,
+      size: isNumber(subtitleFontSize) ? subtitleFontSize : 0,
       family: subtitleFontFamily
     }
     this.text = subtitleText
@@ -18,7 +19,7 @@ class Subtitle {
       bot: 20
     }
 
-    if (this.text !== '' && _.isString(this.text)) {
+    if (this.text !== '' && isString(this.text)) {
       this.text = this.parseMultiLineText(subtitleText)
       const linesOfText = this.text.length
       const numPaddingBtwnLines = linesOfText > 0 ? linesOfText - 1 : 0

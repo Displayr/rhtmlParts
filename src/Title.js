@@ -1,4 +1,5 @@
-const _ = require('lodash')
+const isNumber = require('lodash.isnumber')
+const isString = require('lodash.isstring')
 
 class Title {
   constructor (titleText,
@@ -17,9 +18,9 @@ class Title {
       bot: 10
     }
 
-    if (this.text === '' || !_.isString(this.text)) {
+    if (this.text === '' || !isString(this.text)) {
       // If empty title height, vertical axis numbers may need excess padding
-      this.height = _.isNumber(axisFontSize) ? axisFontSize / 2 : 0
+      this.height = isNumber(axisFontSize) ? axisFontSize / 2 : 0
     } else {
       this.height = this.font.size
     }

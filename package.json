@@ -1,8 +1,8 @@
 {
   "name": "rhtmlParts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Collection of reused widget parts",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "private": true,
   "engines": {
     "node": ">=6.9.5"
@@ -11,16 +11,11 @@
     "prepush": "eslint src"
   },
   "devDependencies": {
-    "husky": "^0.13.3",
-    "sinon": "^2.3.2"
-  },
-  "dependencies": {
     "babel-plugin-array-includes": "^2.0.3",
     "babel-plugin-transform-exponentiation-operator": "^6.24.1",
     "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-preset-es2015-ie": "^6.6.2",
     "babelify": "^7.3.0",
-    "babel-plugin-transform-exponentiation-operator": "^6.24.1",
     "browserify": "^14.4.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^15.0.1",
@@ -37,6 +32,11 @@
     "gulp-tap": "^1.0.1",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
-    "lodash": "4.6.1"
+    "husky": "^0.13.3",
+    "sinon": "^2.3.2"
+  },
+  "dependencies": {
+    "lodash.isnumber": "^3.0.3",
+    "lodash.isstring": "^4.0.1"
   }
 }

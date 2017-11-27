@@ -20,7 +20,7 @@ gulp.task('dist', function () {
     .pipe(tap(function (file) {
       gutil.log(`bundling ${file.path}`)
 
-      file.contents = browserify(file.path, {debug: true})
+      file.contents = browserify(file.path, {debug: true, standalone: 'rhtmlParts' })
         .transform(babelify, {
           presets: [require('babel-preset-es2015-ie')],
           plugins: [
@@ -34,7 +34,7 @@ gulp.task('dist', function () {
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(uglify())
-    .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()) })
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(dest))
+    .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()) })
 })

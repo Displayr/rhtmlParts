@@ -1,10 +1,11 @@
-const _ = require('lodash')
+const isNumber = require('lodash.isnumber')
+const isString = require('lodash.isstring')
 
 class Footer {
   constructor (footerText, footerFontColor, footerFontSize, footerFontFamily, containerHeight) {
     this.font = {
       color: footerFontColor,
-      size: _.isNumber(footerFontSize) ? footerFontSize : 0,
+      size: isNumber(footerFontSize) ? footerFontSize : 0,
       family: footerFontFamily
     }
     this.text = footerText
@@ -15,7 +16,7 @@ class Footer {
       bot: 10
     }
 
-    if (this.text !== '' && _.isString(this.text)) {
+    if (this.text !== '' && isString(this.text)) {
       this.text = this.parseMultiLineText(footerText)
       const linesOfText = this.text.length
       const numPaddingBtwnLines = linesOfText > 0 ? linesOfText - 1 : 0
