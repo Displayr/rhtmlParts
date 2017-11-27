@@ -8,7 +8,7 @@
     "node": ">=6.9.5"
   },
   "scripts": {
-    "prepush": "node ./bin/prepush"
+    "prepush": "eslint src"
   },
   "devDependencies": {
     "husky": "^0.13.3",
