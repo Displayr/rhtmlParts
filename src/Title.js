@@ -1,32 +1,27 @@
-const isNumber = require('lodash.isnumber')
-const isString = require('lodash.isstring')
-
 class Title {
-  constructor (titleText,
-               titleFontColor,
-               titleFontSize,
-               titleFontFamily,
-               axisFontSize,
-               plotPaddingVertical) {
-    this.text = titleText
+  constructor ({
+    text = '',
+    fontColor = '#333333',
+    fontSize = 16,
+    fontFamily = 'arial',
+    topPadding = 10,
+    bottomPadding = 10
+  }) {
+    this.text = text
     this.font = {
-      color: titleFontColor,
-      size: titleFontSize,
-      family: titleFontFamily
+      color: fontColor,
+      size: parseFloat(fontSize),
+      family: fontFamily
     }
     this.padding = {
-      bot: 10
+      top: parseFloat(topPadding),
+      bot: parseFloat(bottomPadding)
     }
 
-    if (this.text === '' || !isString(this.text)) {
-      // If empty title height, vertical axis numbers may need excess padding
-      this.height = isNumber(axisFontSize) ? axisFontSize / 2 : 0
-    } else {
-      this.height = this.font.size
-    }
+    this.height = this.font.size
 
     this.x = 0
-    this.y = plotPaddingVertical + this.height
+    this.y = this.padding.top
   }
 
   setX (x) {
@@ -38,26 +33,23 @@ class Title {
   }
 
   getHeight () {
-    return this.height
-  }
-
-  getSubtitleY () {
-    return this.y + this.padding.bot
+    return this.padding.top + this.height + this.padding.bot
   }
 
   drawWith (plotId, svg) {
     if (this.text !== '') {
       svg.selectAll(`.plt-${plotId}-title`).remove()
       return svg.append('text')
-                .attr('class', `plt-${plotId}-title`)
-                .attr('x', this.x)
-                .attr('y', this.y)
-                .attr('fill', this.font.color)
-                .attr('font-family', this.font.family)
-                .attr('font-size', this.font.size)
-                .attr('text-anchor', 'middle')
-                .attr('font-weight', 'normal')
-                .text(this.text)
+        .attr('class', `plt-${plotId}-title`)
+        .attr('x', this.x)
+        .attr('y', this.y)
+        .attr('fill', this.font.color)
+        .attr('font-family', this.font.family)
+        .attr('font-size', this.font.size)
+        .attr('text-anchor', 'middle')
+        .attr('font-weight', 'normal')
+        .style('dominant-baseline', 'text-before-edge')
+        .text(this.text)
     }
   }
 }

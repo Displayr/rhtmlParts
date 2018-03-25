@@ -1,34 +1,40 @@
-const isNumber = require('lodash.isnumber')
 const isString = require('lodash.isstring')
 
 class Subtitle {
-  constructor (subtitleText, subtitleFontColor, subtitleFontSize, subtitleFontFamily, titleText) {
+  constructor ({
+    subtitleText = '',
+    subtitleFontColor = '#444444',
+    subtitleFontSize = 12,
+    subtitleFontFamily = 'arial',
+    yOffset = 0,
+    bottomPadding = 10,
+    innerPadding = 2
+  }) {
+    this.text = subtitleText
     this.font = {
       color: subtitleFontColor,
-      size: isNumber(subtitleFontSize) ? subtitleFontSize : 0,
+      size: parseFloat(subtitleFontSize),
       family: subtitleFontFamily
     }
-    this.text = subtitleText
-
-    // Positional parameter initialization
-    this.x = 0
-    this.y = 0
     this.padding = {
-      inner: 2,
-      top: 10,
-      bot: 20
+      inner: parseFloat(innerPadding),
+      bot: parseFloat(bottomPadding)
     }
+
+    this.x = 0
+    this.y = parseFloat(yOffset)
 
     if (this.text !== '' && isString(this.text)) {
       this.text = this.parseMultiLineText(subtitleText)
       const linesOfText = this.text.length
-      const numPaddingBtwnLines = linesOfText > 0 ? linesOfText - 1 : 0
-      this.height = (this.font.size * linesOfText) +
-        (this.padding.inner * numPaddingBtwnLines) +
-        (this.padding.top + this.padding.bot)
+      const numPaddingBtwnLines = Math.max(0, linesOfText)
+      this.height =
+        this.font.size * linesOfText +
+        this.padding.inner * numPaddingBtwnLines +
+        this.padding.bot
     } else {
       this.text = []
-      this.height = (titleText === '') ? 0 : this.padding.bot
+      this.height = 0
     }
   }
 
@@ -51,17 +57,18 @@ class Subtitle {
   drawWith (plotId, svg) {
     svg.selectAll(`.plt-${plotId}-subtitle`).remove()
     return svg.selectAll(`.plt-${plotId}-subtitle`)
-              .data(this.text)
-              .enter()
-              .append('text')
-              .attr('class', `plt-${plotId}-subtitle`)
-              .attr('x', this.x)
-              .attr('y', (d, i) => this.padding.top + this.y + (i * (this.font.size + this.padding.inner)))
-              .attr('fill', this.font.color)
-              .attr('font-family', this.font.family)
-              .attr('font-size', this.font.size)
-              .attr('text-anchor', 'middle')
-              .text(d => d)
+      .data(this.text)
+      .enter()
+      .append('text')
+      .attr('class', `plt-${plotId}-subtitle`)
+      .attr('x', this.x)
+      .attr('y', (d, i) => this.y + (i * (this.font.size + this.padding.inner)))
+      .attr('fill', this.font.color)
+      .attr('font-family', this.font.family)
+      .attr('font-size', this.font.size)
+      .attr('text-anchor', 'middle')
+      .style('dominant-baseline', 'text-before-edge')
+      .text(d => d)
   }
 }
 

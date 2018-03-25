@@ -1,28 +1,36 @@
-const isNumber = require('lodash.isnumber')
 const isString = require('lodash.isstring')
 
 class Footer {
-  constructor (footerText, footerFontColor, footerFontSize, footerFontFamily, containerHeight) {
+  constructor ({
+    footerText = '',
+    footerFontColor = '#444444',
+    footerFontSize = 8,
+    footerFontFamily = 'arial',
+    containerHeight = 0,
+    topPadding = 10,
+    bottomPadding = 10,
+    innerPadding = 2
+  }) {
+    this.text = footerText
     this.font = {
       color: footerFontColor,
-      size: isNumber(footerFontSize) ? footerFontSize : 0,
+      size: parseFloat(footerFontSize),
       family: footerFontFamily
     }
-    this.text = footerText
-
     this.padding = {
-      inner: 0,
-      top: 15,
-      bot: 10
+      top: parseFloat(topPadding),
+      bot: parseFloat(bottomPadding),
+      inner: parseFloat(innerPadding)
     }
 
     if (this.text !== '' && isString(this.text)) {
       this.text = this.parseMultiLineText(footerText)
       const linesOfText = this.text.length
-      const numPaddingBtwnLines = linesOfText > 0 ? linesOfText - 1 : 0
-      this.height = (this.font.size * linesOfText) +
-        (this.padding.inner * numPaddingBtwnLines) +
-        (this.padding.top + this.padding.bot)
+      const numPaddingBtwnLines = Math.max(0, linesOfText)
+      this.height =
+        this.font.size * linesOfText +
+        this.padding.inner * numPaddingBtwnLines +
+        this.padding.top + this.padding.bot
     } else {
       this.text = []
       this.height = 0
@@ -40,8 +48,8 @@ class Footer {
     this.x = x
   }
 
-  setY (y) {
-    this.y = y
+  setContainerHeight (newHeight) {
+    this.y = newHeight - this.getHeight()
   }
 
   getHeight () {
@@ -49,8 +57,12 @@ class Footer {
   }
 
   drawWith (plotId, svg) {
-    svg.selectAll(`.plt-${plotId}-footer`).remove()
-    return svg.selectAll(`.plt-${plotId}-footer`)
+    svg.selectAll(`.plt-${plotId}-footer-container`).remove()
+
+    this.footerContainer = svg.append('g')
+      .attr('class', `plt-${plotId}-footer-container`)
+
+    return this.footerContainer.selectAll(`.plt-${plotId}-footer-text`)
     .data(this.text)
     .enter()
     .append('text')
@@ -61,6 +73,7 @@ class Footer {
     .attr('font-family', this.font.family)
     .attr('font-size', this.font.size)
     .attr('text-anchor', 'middle')
+    .style('dominant-baseline', 'text-before-edge')
     .text(d => d)
   }
 }
