@@ -1,4 +1,5 @@
-const isString = require('lodash.isstring')
+const { splitIntoLines } = require('./labelUtils')
+const REALLY_LARGE_SCREEN_WIDTH_CAUSING_NO_WRAPPING = 15000
 
 class Subtitle {
   constructor ({
@@ -17,37 +18,27 @@ class Subtitle {
       family: subtitleFontFamily
     }
     this.padding = {
+      top: 0, // NB specified for symetry with Title code, but not user configurable
       inner: parseFloat(innerPadding),
-      bot: parseFloat(bottomPadding)
+      bottom: parseFloat(bottomPadding)
     }
 
+    this.height = null
     this.x = 0
     this.y = parseFloat(yOffset)
-
-    if (this.text !== '' && isString(this.text)) {
-      this.text = this.parseMultiLineText(subtitleText)
-      const linesOfText = this.text.length
-      const numPaddingBtwnLines = Math.max(0, linesOfText)
-      this.height =
-        this.font.size * linesOfText +
-        this.padding.inner * numPaddingBtwnLines +
-        this.padding.bot
-    } else {
-      this.text = []
-      this.height = 0
-    }
-  }
-
-  parseMultiLineText (text) {
-    return text.split('<br>')
+    this.maxWidth = REALLY_LARGE_SCREEN_WIDTH_CAUSING_NO_WRAPPING
   }
 
   setX (x) {
-    this.x = x
+    this.x = parseFloat(x)
   }
 
   setY (y) {
-    this.y = y
+    this.y = parseFloat(y)
+  }
+
+  setMaxWidth (maxWidth) {
+    this.maxWidth = parseFloat(maxWidth)
   }
 
   getHeight () {
@@ -56,19 +47,30 @@ class Subtitle {
 
   drawWith (plotId, svg) {
     svg.selectAll(`.plt-${plotId}-subtitle`).remove()
-    return svg.selectAll(`.plt-${plotId}-subtitle`)
-      .data(this.text)
-      .enter()
-      .append('text')
-      .attr('class', `plt-${plotId}-subtitle`)
-      .attr('x', this.x)
-      .attr('y', (d, i) => this.y + (i * (this.font.size + this.padding.inner)))
-      .attr('fill', this.font.color)
-      .attr('font-family', this.font.family)
-      .attr('font-size', this.font.size)
-      .attr('text-anchor', 'middle')
-      .style('dominant-baseline', 'text-before-edge')
-      .text(d => d)
+
+    if (this.text !== '') {
+      let lines = splitIntoLines(this.text, this.maxWidth, this.font.size, this.font.family)
+      this.height =
+        this.padding.top +
+        this.font.size * lines.length + this.padding.inner * (lines.length - 1) +
+        this.padding.bottom
+
+      lines.forEach((text, lineIndex) => {
+        svg.append('text')
+          .attr('class', `plt-${plotId}-subtitle`)
+          .attr('x', this.x)
+          .attr('y', this.y + (this.font.size + this.padding.inner) * lineIndex)
+          .attr('fill', this.font.color)
+          .attr('font-family', this.font.family)
+          .attr('font-size', this.font.size)
+          .attr('text-anchor', 'middle')
+          .attr('font-weight', 'normal')
+          .style('dominant-baseline', 'text-before-edge')
+          .text(text)
+      })
+    } else {
+      this.height = 0
+    }
   }
 }
 

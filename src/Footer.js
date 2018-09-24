@@ -1,4 +1,5 @@
-const isString = require('lodash.isstring')
+const { splitIntoLines } = require('./labelUtils')
+const REALLY_LARGE_SCREEN_WIDTH_CAUSING_NO_WRAPPING = 15000
 
 class Footer {
   constructor ({
@@ -19,62 +20,64 @@ class Footer {
     }
     this.padding = {
       top: parseFloat(topPadding),
-      bot: parseFloat(bottomPadding),
+      bottom: parseFloat(bottomPadding),
       inner: parseFloat(innerPadding)
     }
 
-    if (this.text !== '' && isString(this.text)) {
-      this.text = this.parseMultiLineText(footerText)
-      const linesOfText = this.text.length
-      const numPaddingBtwnLines = Math.max(0, linesOfText)
-      this.height =
-        this.font.size * linesOfText +
-        this.padding.inner * numPaddingBtwnLines +
-        this.padding.top + this.padding.bot
-    } else {
-      this.text = []
-      this.height = 0
-    }
-
+    this.height = null
     this.x = 0
     this.y = containerHeight - this.getHeight()
+    this.maxWidth = REALLY_LARGE_SCREEN_WIDTH_CAUSING_NO_WRAPPING
   }
-
-  parseMultiLineText (text) {
-    return text.split('<br>')
-  }
-
   setX (x) {
-    this.x = x
+    this.x = parseFloat(x)
   }
 
-  setContainerHeight (newHeight) {
-    this.y = newHeight - this.getHeight()
+  setY (y) {
+    this.y = parseFloat(y)
+  }
+
+  setMaxWidth (maxWidth) {
+    this.maxWidth = parseFloat(maxWidth)
   }
 
   getHeight () {
     return this.height
   }
 
+  setContainerHeight (containerHeight) {
+    this.containerHeight = containerHeight
+  }
+
   drawWith (plotId, svg) {
-    svg.selectAll(`.plt-${plotId}-footer-container`).remove()
+    svg.selectAll(`.plt-${plotId}-footer`).remove()
 
-    this.footerContainer = svg.append('g')
-      .attr('class', `plt-${plotId}-footer-container`)
+    if (this.text !== '') {
+      let lines = splitIntoLines(this.text, this.maxWidth, this.font.size, this.font.family)
+      this.height =
+        this.padding.top +
+        this.font.size * lines.length + this.padding.inner * (lines.length - 1) +
+        this.padding.bottom
 
-    return this.footerContainer.selectAll(`.plt-${plotId}-footer-text`)
-    .data(this.text)
-    .enter()
-    .append('text')
-    .attr('class', `plt-${plotId}-footer`)
-    .attr('x', this.x)
-    .attr('y', (d, i) => this.padding.top + this.y + (i * (this.font.size + this.padding.inner)))
-    .attr('fill', this.font.color)
-    .attr('font-family', this.font.family)
-    .attr('font-size', this.font.size)
-    .attr('text-anchor', 'middle')
-    .style('dominant-baseline', 'text-before-edge')
-    .text(d => d)
+      this.y = this.containerHeight -
+        this.padding.bottom -
+        (this.font.size * lines.length + this.padding.inner * (lines.length - 1))
+
+      lines.forEach((text, lineIndex) => {
+        svg.append('text')
+          .attr('class', `plt-${plotId}-footer`)
+          .attr('x', this.x)
+          .attr('y', this.y + (this.font.size + this.padding.inner) * lineIndex)
+          .attr('fill', this.font.color)
+          .attr('font-family', this.font.family)
+          .attr('font-size', this.font.size)
+          .attr('text-anchor', 'middle')
+          .style('dominant-baseline', 'text-before-edge')
+          .text(text)
+      })
+    } else {
+      this.height = 0
+    }
   }
 }
 

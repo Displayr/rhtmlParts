@@ -20,7 +20,7 @@ gulp.task('dist', function () {
     .pipe(tap(function (file) {
       gutil.log(`bundling ${file.path}`)
 
-      file.contents = browserify(file.path, {debug: true, standalone: 'rhtmlParts' })
+      file.contents = browserify(file.path, {debug: true, standalone: 'rhtmlParts'})
         .transform(babelify, {
           presets: [require('babel-preset-es2015-ie')],
           plugins: [
