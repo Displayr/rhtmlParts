@@ -26,7 +26,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^7.0.1",
     "eslint-plugin-standard": "^3.0.1",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-buffer": "0.0.2",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-tap": "^1.0.1",
