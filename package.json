@@ -1,6 +1,6 @@
 {
   "name": "rhtmlParts",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Collection of reused widget parts",
   "main": "dist/index.js",
   "private": true,
@@ -38,5 +38,8 @@
   "dependencies": {
     "lodash.isnumber": "^3.0.3",
     "lodash.isstring": "^4.0.1"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.11"
   }
 }

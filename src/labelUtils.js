@@ -4,13 +4,13 @@ function _getUniqueId () {
 }
 
 function getLabelDimensionsUsingDivApproximation (inputString, fontSize = 12, fontFamily = 'sans-serif') {
-  const uniqueId = _getUniqueId()
-
-  const el = document.createElement('div')
-  const domString = `<div id="${uniqueId}" style="display:inline-block; font-size: ${fontSize}px; font-family: ${fontFamily}">${inputString}</div>`
-  el.innerHTML = domString
-  document.body.appendChild(el.firstChild)
-  const testElement = document.getElementById(uniqueId)
+  const testElement = document.createElement('div')
+  testElement.id = _getUniqueId()
+  testElement.style.display = 'inline-block'
+  testElement.style.fontSize = `${fontSize}px`
+  testElement.style.fontFamily = fontFamily
+  testElement.textContent = inputString
+  document.body.appendChild(testElement)
   const { width, height } = testElement.getBoundingClientRect()
   testElement.remove()
   return { width, height }
